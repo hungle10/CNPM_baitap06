@@ -1,0 +1,181 @@
+const { body, validationResult, query, param } = require("express-validator");
+
+// Middleware xử lý kết quả validation
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      EC: -1,
+      EM: "Validation error",
+      errors: errors.array().map((err) => ({
+        field: err.param,
+        message: err.msg,
+      })),
+    });
+  }
+  next();
+};
+
+// ===========================
+// REGISTER VALIDATION
+// ===========================
+const validateRegister = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is required")
+    .isLength({ min: 3 })
+    .withMessage("Name must be at least 3 characters"),
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Email is not valid")
+    .normalizeEmail(),
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one uppercase letter")
+    .matches(/[0-9]/)
+    .withMessage("Password must contain at least one number"),
+  body("confirmPassword")
+    .notEmpty()
+    .withMessage("Confirm password is required")
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage("Confirm password does not match"),
+  handleValidationErrors,
+];
+
+// ===========================
+// LOGIN VALIDATION
+// ===========================
+const validateLogin = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Email is not valid")
+    .normalizeEmail(),
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+  handleValidationErrors,
+];
+
+// ===========================
+// FORGOT PASSWORD VALIDATION
+// ===========================
+const validateForgotPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Email is not valid")
+    .normalizeEmail(),
+  handleValidationErrors,
+];
+
+// ===========================
+// RESET PASSWORD VALIDATION
+// ===========================
+const validateResetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Email is not valid")
+    .normalizeEmail(),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("New password is required")
+    .isLength({ min: 6 })
+    .withMessage("New password must be at least 6 characters")
+    .matches(/[A-Z]/)
+    .withMessage("New password must contain at least one uppercase letter")
+    .matches(/[0-9]/)
+    .withMessage("New password must contain at least one number"),
+  body("confirmPassword")
+    .notEmpty()
+    .withMessage("Confirm password is required")
+    .custom((value, { req }) => value === req.body.newPassword)
+    .withMessage("Confirm password does not match"),
+  handleValidationErrors,
+];
+
+// ===========================
+// CHECK OTP VALIDATION
+// ===========================
+const validateCheckOTP = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Email is not valid")
+    .normalizeEmail(),
+  body("otp")
+    .trim()
+    .notEmpty()
+    .withMessage("OTP is required")
+    .isLength({ min: 4, max: 6 })
+    .withMessage("OTP must be between 4 and 6 characters"),
+  handleValidationErrors,
+];
+
+// ===========================
+// PRODUCT QUERY VALIDATION
+// ===========================
+const validateProductQuery = [
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be a positive integer")
+    .toInt(),
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100")
+    .toInt(),
+  query("category")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Category cannot be empty"),
+  query("search")
+    .optional()
+    .trim(),
+  query("sortBy")
+    .optional()
+    .trim()
+    .isIn(["name", "price", "rating", "createdAt", "views"])
+    .withMessage("Invalid sort field"),
+  query("sortOrder")
+    .optional()
+    .isIn(["asc", "desc"])
+    .withMessage("Sort order must be asc or desc"),
+  query("minPrice").optional().isFloat({ min: 0 }).withMessage("minPrice must be a positive number").toFloat(),
+  query("maxPrice").optional().isFloat({ min: 0 }).withMessage("maxPrice must be a positive number").toFloat(),
+  query("promo").optional().isBoolean().withMessage("promo must be boolean").toBoolean(),
+  query("minViews").optional().isInt({ min: 0 }).withMessage("minViews must be non-negative integer").toInt(),
+  query("maxViews").optional().isInt({ min: 0 }).withMessage("maxViews must be non-negative integer").toInt(),
+  handleValidationErrors,
+];
+
+module.exports = {
+  validateRegister,
+  validateLogin,
+  validateForgotPassword,
+  validateResetPassword,
+  validateCheckOTP,
+  validateProductQuery,
+  handleValidationErrors,
+};

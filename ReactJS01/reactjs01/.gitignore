@@ -1,0 +1,41 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.development
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+logs/*.log
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Mac / Windows
+.DS_Store
+Thumbs.db
+
+# Database local files (nếu có)
+*.sqlite
+*.db
+*.db-journal
+
+# Uploads (tùy dự án)
+uploads/
+public/uploads/

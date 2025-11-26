@@ -1,0 +1,95 @@
+/* Product Card Styles */
+.product-card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.product-image {
+  height: 200px;
+  object-fit: cover;
+  background-color: #f0f0f0;
+}
+
+.product-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.product-stock {
+  font-size: 12px;
+  text-align: right;
+}
+
+.stock-available {
+  color: #52c41a;
+}
+
+.stock-unavailable {
+  color: #ff4d4f;
+}
+
+/* Filter Section */
+.filter-section {
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.filter-label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Infinite Scroll Loader */
+.infinite-scroll-loader {
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.infinite-scroll-loader.end-message {
+  color: #999;
+}
+
+/* Grid Responsive */
+@media (max-width: 768px) {
+  .product-card {
+    margin-bottom: 12px;
+  }
+}
+
+/* View Mode Buttons */
+.view-mode-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.view-mode-buttons button {
+  flex: 1;
+}
+
+/* Products Container */
+.products-container {
+  padding: 20px;
+  min-height: calc(100vh - 100px);
+}
+
+.products-title {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1890ff;
+}

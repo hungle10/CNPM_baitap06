@@ -1,0 +1,124 @@
+import React, { useContext } from "react";
+import { Button, Col, Divider, Form, Input, notification, Row, Spin } from "antd";
+import { loginApi } from "../util/api";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/context/auth.context";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const { setAuth } = useContext(AuthContext);
+  const [loading, setLoading] = React.useState(false);
+
+  const onFinish = async (values) => {
+    try {
+      setLoading(true);
+      const { email, password } = values;
+
+      const res = await loginApi(email, password);
+
+      if (res && res.EC === 0) {
+        localStorage.setItem("access_token", res.access_token);
+        notification.success({
+          message: "LOGIN USER",
+          description: "Đăng nhập thành công",
+        });
+
+        setAuth({
+          isAuthenticated: true,
+          user: {
+            email: res?.user?.email ?? "",
+            name: res?.user?.name ?? "",
+          },
+        });
+
+        navigate("/");
+      } else {
+        notification.error({
+          message: "LOGIN USER",
+          description: res?.EM ?? "Đăng nhập thất bại",
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: "Lỗi",
+        description: "Có lỗi xảy ra, vui lòng thử lại",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Row justify={"center"} style={{ marginTop: "30px" }}>
+      <Col xs={24} md={16} lg={8}>
+        <fieldset
+          style={{
+            padding: "15px",
+            margin: "5px",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+          }}
+        >
+          <legend>Đăng Nhập</legend>
+
+          <Form
+            name="basic"
+            onFinish={onFinish}
+            autoComplete="off"
+            layout="vertical"
+          >
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                {
+                  type: "email",
+                  message: "Email không hợp lệ!",
+                },
+              ]}
+            >
+              <Input placeholder="abc@example.com" />
+            </Form.Item>
+
+            <Form.Item
+              label="Mật khẩu"
+              name="password"
+              rules={[
+                { required: true, message: "Vui lòng nhập mật khẩu!" },
+                {
+                  min: 6,
+                  message: "Mật khẩu phải có ít nhất 6 ký tự!",
+                },
+              ]}
+            >
+              <Input.Password placeholder="Nhập mật khẩu" />
+            </Form.Item>
+
+            <div style={{ marginBottom: "15px" }}>
+              <Link to="/forgot">Quên mật khẩu?</Link>
+            </div>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Đăng Nhập
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <Link to={"/"}>
+            <ArrowLeftOutlined /> Quay lại trang chủ
+          </Link>
+          <Divider />
+
+          <div style={{ textAlign: "center" }}>
+            Chưa có tài khoản? <Link to={"/register"}>Đăng ký tại đây</Link>
+          </div>
+        </fieldset>
+      </Col>
+    </Row>
+  );
+};
+
+export default LoginPage;
