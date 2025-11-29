@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Col, Divider, Form, Input, notification, Row, Spin } from "antd";
+import { Button, Col, Divider, Form, Input, notification, Row } from "antd";
 import { loginApi } from "../util/api";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/context/auth.context";
@@ -8,44 +8,33 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 const LoginPage = () => {
   const navigate = useNavigate();
   const { setAuth } = useContext(AuthContext);
-  const [loading, setLoading] = React.useState(false);
 
   const onFinish = async (values) => {
-    try {
-      setLoading(true);
-      const { email, password } = values;
+    const { email, password } = values;
 
-      const res = await loginApi(email, password);
+    const res = await loginApi(email, password);
 
-      if (res && res.EC === 0) {
-        localStorage.setItem("access_token", res.access_token);
-        notification.success({
-          message: "LOGIN USER",
-          description: "Đăng nhập thành công",
-        });
-
-        setAuth({
-          isAuthenticated: true,
-          user: {
-            email: res?.user?.email ?? "",
-            name: res?.user?.name ?? "",
-          },
-        });
-
-        navigate("/");
-      } else {
-        notification.error({
-          message: "LOGIN USER",
-          description: res?.EM ?? "Đăng nhập thất bại",
-        });
-      }
-    } catch (error) {
-      notification.error({
-        message: "Lỗi",
-        description: "Có lỗi xảy ra, vui lòng thử lại",
+    if (res && res.EC === 0) {
+      localStorage.setItem("access_token", res.access_token);
+      notification.success({
+        message: "LOGIN USER",
+        description: "Success",
       });
-    } finally {
-      setLoading(false);
+
+      setAuth({
+        isAuthenticated: true,
+        user: {
+          email: res?.user?.email ?? "",
+          name: res?.user?.name ?? "",
+        },
+      });
+
+      navigate("/");
+    } else {
+      notification.error({
+        message: "LOGIN USER",
+        description: res?.EM ?? "error",
+      });
     }
   };
 
@@ -71,38 +60,29 @@ const LoginPage = () => {
             <Form.Item
               label="Email"
               name="email"
-              rules={[
-                { required: true, message: "Vui lòng nhập email!" },
-                {
-                  type: "email",
-                  message: "Email không hợp lệ!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input your email!" }]}
             >
-              <Input placeholder="abc@example.com" />
+              <Input />
             </Form.Item>
 
             <Form.Item
-              label="Mật khẩu"
+              label="Password"
               name="password"
               rules={[
-                { required: true, message: "Vui lòng nhập mật khẩu!" },
-                {
-                  min: 6,
-                  message: "Mật khẩu phải có ít nhất 6 ký tự!",
-                },
+                { required: true, message: "Please input your password!" },
               ]}
             >
-              <Input.Password placeholder="Nhập mật khẩu" />
+              <Input.Password />
             </Form.Item>
 
+            {/* 🔥 Thêm Forgot Password */}
             <div style={{ marginBottom: "15px" }}>
               <Link to="/forgot">Quên mật khẩu?</Link>
             </div>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Đăng Nhập
+              <Button type="primary" htmlType="submit">
+                Login
               </Button>
             </Form.Item>
           </Form>

@@ -54,7 +54,9 @@ const auth = (req, res, next) => {
   ];
 
   // Nếu request đang vào API không cần auth → cho qua
-  if (whiteLists.includes(req.originalUrl.replace("/v1/api", ""))) {
+  const path = req.originalUrl.replace("/v1/api", "");
+  // Make product list endpoints public (client-facing) while admin paths remain protected
+  if (whiteLists.includes(path) || path.startsWith("/products")) {
     return next();
   }
 
@@ -76,8 +78,10 @@ const auth = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = {
+      id: decoded.id,
       email: decoded.email,
       name: decoded.name,
+      role: decoded.role || "user",
     };
 
     console.log(">>> Token verified:", decoded);

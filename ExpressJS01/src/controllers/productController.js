@@ -5,8 +5,6 @@ const {
   createProductService,
   updateProductService,
   deleteProductService,
-  searchProductsService,
-  reindexAllProductsService,
 } = require("../services/productService");
 
 // ===========================
@@ -14,41 +12,7 @@ const {
 // ===========================
 const getProducts = async (req, res) => {
   try {
-    // support extra search filters for ES
-    const {
-      page = 1,
-      limit = 10,
-      category,
-      search,
-      sortBy,
-      sortOrder,
-      minPrice,
-      maxPrice,
-      promo,
-      minViews,
-      maxViews,
-    } = req.query;
-
-    // if advanced filters are present, try the ES-backed search for richer capabilities
-    const advanced = search || minPrice || maxPrice || promo || minViews || maxViews;
-
-    if (advanced) {
-      const result = await searchProductsService({
-        q: search,
-        category,
-        minPrice: minPrice ? Number(minPrice) : undefined,
-        maxPrice: maxPrice ? Number(maxPrice) : undefined,
-        promo,
-        minViews: minViews ? Number(minViews) : undefined,
-        maxViews: maxViews ? Number(maxViews) : undefined,
-        sortBy: sortBy || "createdAt",
-        sortOrder: sortOrder || "desc",
-        page: Number(page),
-        limit: Number(limit),
-      });
-
-      return res.status(200).json(result);
-    }
+    const { page = 1, limit = 10, category, search, sortBy, sortOrder } = req.query;
 
     const result = await getProductsService(
       parseInt(page),
@@ -66,19 +30,6 @@ const getProducts = async (req, res) => {
       EC: -1,
       EM: "Internal server error",
     });
-  }
-};
-
-// ===========================
-// ADMIN: reindex all products into Elasticsearch
-// ===========================
-const reindexProducts = async (req, res) => {
-  try {
-    const result = await reindexAllProductsService();
-    return res.status(result.EC === 0 ? 200 : 500).json(result);
-  } catch (error) {
-    console.error("Error in reindexProducts:", error);
-    return res.status(500).json({ EC: -1, EM: "Internal server error" });
   }
 };
 
@@ -201,5 +152,4 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
-  reindexProducts,
 };

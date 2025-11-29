@@ -138,21 +138,28 @@ const loginService = async (email, password) => {
     return { EC: 1, EM: "Sai mật khẩu" };
   }
 
-  // Generate JWT
+  // Generate JWT (include id and role for authorization checks)
   const payload = {
+    id: foundUser.id,
     email: foundUser.email,
     name: foundUser.name,
+    role: foundUser.role || "user",
   };
 
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "1d",
+    expiresIn: process.env.JWT_EXPIRE || "1d",
   });
 
   return {
     EC: 0,
     EM: "Đăng nhập thành công",
     access_token: accessToken,
-    user: foundUser,
+    user: {
+      id: foundUser.id,
+      name: foundUser.name,
+      email: foundUser.email,
+      role: foundUser.role,
+    },
   };
 };
 

@@ -11,8 +11,9 @@ function App() {
   useEffect(() => {
     const fetchAccount = async () => {
       setAppLoading(true);
-      const res = await axios.get(`/v1/api/user`);
-      if (res && !res.message) {
+      // Use /v1/api/account which returns the decoded token user (profile)
+      const res = await axios.get(`/v1/api/account`);
+      if (res && !res.message && res.email) {
         setAuth({
           isAuthenticated: true,
           user: {

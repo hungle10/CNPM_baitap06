@@ -5,7 +5,6 @@ import {
   Card,
   Select,
   Input,
-  InputNumber,
   Button,
   Spin,
   Empty,
@@ -13,7 +12,6 @@ import {
   Pagination,
   Rate,
   Tag,
-  Switch,
 } from "antd";
 import { SearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { getProductsApi, getCategoriesApi } from "../util/api";
@@ -34,11 +32,6 @@ const ProductsPage = () => {
     search: "",
     sortBy: "createdAt",
     sortOrder: "desc",
-    minPrice: undefined,
-    maxPrice: undefined,
-    promo: undefined,
-    minViews: undefined,
-    maxViews: undefined,
   });
   const [viewMode, setViewMode] = useState("pagination"); // 'pagination' or 'infinite'
   const [infiniteProducts, setInfiniteProducts] = useState([]);
@@ -73,12 +66,7 @@ const ProductsPage = () => {
           filters.category,
           filters.search || null,
           filters.sortBy,
-          filters.sortOrder,
-          filters.minPrice,
-          filters.maxPrice,
-          filters.promo,
-          filters.minViews,
-          filters.maxViews
+          filters.sortOrder
         );
 
         if (response?.EC === 0) {
@@ -110,12 +98,7 @@ const ProductsPage = () => {
           filters.category,
           filters.search || null,
           filters.sortBy,
-          filters.sortOrder,
-          filters.minPrice,
-          filters.maxPrice,
-          filters.promo,
-          filters.minViews,
-          filters.maxViews
+          filters.sortOrder
         );
 
         if (response?.EC === 0) {
@@ -190,27 +173,6 @@ const ProductsPage = () => {
 
   const handleSortOrderChange = (value) => {
     setFilters((prev) => ({ ...prev, sortOrder: value }));
-  };
-
-  const handleMinPriceChange = (value) => {
-    setFilters((prev) => ({ ...prev, minPrice: value }));
-  };
-
-  const handleMaxPriceChange = (value) => {
-    setFilters((prev) => ({ ...prev, maxPrice: value }));
-  };
-
-  const handlePromoChange = (checked) => {
-    // set explicit boolean when toggled. Use undefined to represent 'any'.
-    setFilters((prev) => ({ ...prev, promo: checked }));
-  };
-
-  const handleMinViewsChange = (value) => {
-    setFilters((prev) => ({ ...prev, minViews: value }));
-  };
-
-  const handleMaxViewsChange = (value) => {
-    setFilters((prev) => ({ ...prev, maxViews: value }));
   };
 
   const handlePageChange = (page) => {
@@ -350,58 +312,6 @@ const ProductsPage = () => {
                 { label: "Tăng dần", value: "asc" },
               ]}
             />
-          </Col>
-        </Row>
-
-        {/* Advanced filters: price range, promo, views */}
-        <Row gutter={[16, 16]} style={{ marginTop: 12 }}>
-          <Col xs={24} sm={12} md={6}>
-            <Space style={{ width: "100%", justifyContent: "space-between" }}>
-              <InputNumber
-                style={{ width: "48%" }}
-                min={0}
-                placeholder="Giá từ"
-                value={filters.minPrice}
-                onChange={handleMinPriceChange}
-              />
-              <InputNumber
-                style={{ width: "48%" }}
-                min={0}
-                placeholder="Đến"
-                value={filters.maxPrice}
-                onChange={handleMaxPriceChange}
-              />
-            </Space>
-          </Col>
-
-          <Col xs={24} sm={12} md={6} style={{ display: "flex", alignItems: "center" }}>
-            <span style={{ marginRight: 8 }}>Chỉ khuyến mãi</span>
-            <Switch checked={filters.promo === true} onChange={handlePromoChange} />
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Space style={{ width: "100%", justifyContent: "space-between" }}>
-              <InputNumber
-                style={{ width: "48%" }}
-                min={0}
-                placeholder="Lượt xem từ"
-                value={filters.minViews}
-                onChange={handleMinViewsChange}
-              />
-              <InputNumber
-                style={{ width: "48%" }}
-                min={0}
-                placeholder="Đến"
-                value={filters.maxViews}
-                onChange={handleMaxViewsChange}
-              />
-            </Space>
-          </Col>
-
-          <Col xs={24} sm={12} md={6} style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-            <Button onClick={() => setFilters((prev) => ({ ...prev, minPrice: undefined, maxPrice: undefined, promo: undefined, minViews: undefined, maxViews: undefined }))}>
-              Xóa bộ lọc
-            </Button>
           </Col>
         </Row>
 

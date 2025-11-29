@@ -18,19 +18,7 @@ const getUserApi = () => {
 };
 
 // Product APIs
-const getProductsApi = (
-  page = 1,
-  limit = 10,
-  category = null,
-  search = null,
-  sortBy = "createdAt",
-  sortOrder = "desc",
-  minPrice = undefined,
-  maxPrice = undefined,
-  promo = undefined,
-  minViews = undefined,
-  maxViews = undefined
-) => {
+const getProductsApi = (page = 1, limit = 10, category = null, search = null, sortBy = "createdAt", sortOrder = "desc") => {
   const URL_API = "/v1/api/products";
   const params = new URLSearchParams({
     page,
@@ -41,11 +29,6 @@ const getProductsApi = (
   if (search) params.append("search", search);
   if (sortBy) params.append("sortBy", sortBy);
   if (sortOrder) params.append("sortOrder", sortOrder);
-  if (typeof minPrice !== "undefined" && minPrice !== null) params.append("minPrice", minPrice);
-  if (typeof maxPrice !== "undefined" && maxPrice !== null) params.append("maxPrice", maxPrice);
-  if (typeof promo !== "undefined" && promo !== null) params.append("promo", promo);
-  if (typeof minViews !== "undefined" && minViews !== null) params.append("minViews", minViews);
-  if (typeof maxViews !== "undefined" && maxViews !== null) params.append("maxViews", maxViews);
   
   return axios.get(`${URL_API}?${params.toString()}`);
 };

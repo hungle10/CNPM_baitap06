@@ -57,15 +57,6 @@ const initViewEngine = require("./config/viewEngine");
 const apiRoutes = require("./routes/api");
 const sequelize = require("./config/database");
 const { getHomepage } = require("./controllers/homeController");
-const seedProducts = require("./utils/seedProducts");
-
-// Elasticsearch
-const { esEnabled } = require("./config/elasticsearch");
-const { ensureIndex, bulkIndexAllProducts } = require("./services/elasticsearchService");
-
-// Import models to ensure they are registered
-const User = require("./models/user");
-const Product = require("./models/product");
 
 const app = express();
 const PORT = process.env.PORT ?? 8888;
@@ -90,33 +81,26 @@ app.use("/v1/api", apiRoutes);
 (async function bootstrap() {
   try {
     await sequelize.authenticate();
-    console.log("✅ Database connection established");
+    console.log(" Database connection established");
 
     await sequelize.sync();
-    console.log("✅ All models synchronized");
+    console.log(" All models synchronized");
 
-    // Seed sample products
-    await seedProducts();
+    // Seed demo data if database is empty (products and optional admin user)
+    try {
+      const seedProducts = require("./utils/seedProducts");
+      const seedAdmin = require("./utils/seedAdmin");
 
-    // Initialize Elasticsearch index (optional)
-    if (esEnabled) {
-      try {
-        await ensureIndex();
-        console.log("✅ Elasticsearch index checked/created");
-
-        if (process.env.ELASTIC_REINDEX_ON_STARTUP === "true") {
-          const r = await bulkIndexAllProducts();
-          console.log("✅ Elasticsearch reindex result:", r);
-        }
-      } catch (err) {
-        console.warn("⚠️ Elasticsearch initialization failed:", err.message || err);
-      }
+      await seedProducts();
+      await seedAdmin();
+    } catch (err) {
+      console.warn("Seeding skipped or failed:", err && err.message ? err.message : err);
     }
 
     app.listen(PORT, () =>
-      console.log(`✅ Server is up and running at port ${PORT}`)
+      console.log(` Server is up and running at port ${PORT}`)
     );
   } catch (err) {
-    console.error("❌ Failed to initialize the server:", err);
+    console.error(" Failed to initialize the server:", err);
   }
 })();

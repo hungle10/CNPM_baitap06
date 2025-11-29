@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon ./src/server.js",
-    "start": "nodemon ./src/server.js"
-    ,"reindex": "node ./src/scripts/reindex.js"
+    "start": "nodemon ./src/server.js",
+    "smoke-test": "node ./src/utils/testApi.js"
   },
   "author": "Le Thai Hung",
   "license": "ISC",
@@ -23,6 +23,8 @@
     "mysql2": "^3.15.3",
     "nodemailer": "^7.0.10",
     "sequelize": "^6.37.7"
-    ,"@elastic/elasticsearch": "^8.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

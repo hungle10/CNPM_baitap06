@@ -1,10 +1,4 @@
 const Product = require("../models/product");
-const {
-  indexProduct,
-  removeProduct,
-  searchProducts: esSearchProducts,
-  bulkIndexAllProducts,
-} = require("./elasticsearchService");
 const { Op } = require("sequelize");
 
 // ===========================
@@ -62,35 +56,6 @@ const getProductsService = async (
     return {
       EC: -1,
       EM: "Error fetching products",
-    };
-  }
-};
-
-// ===========================
-// SEARCH PRODUCTS USING ELASTICSEARCH (if available)
-// ===========================
-const searchProductsService = async (query) => {
-  try {
-    const esResult = await esSearchProducts(query);
-
-    if (!esResult) {
-      // Elasticsearch not available or not configured, fallback to DB getProducts
-      return await getProductsService(
-        query.page ?? 1,
-        query.limit ?? 10,
-        query.category ?? null,
-        query.search ?? null,
-        query.sortBy ?? "createdAt",
-        (query.sortOrder ?? "desc").toUpperCase()
-      );
-    }
-
-    return esResult;
-  } catch (error) {
-    console.error("Error searching products (ES):", error);
-    return {
-      EC: -1,
-      EM: "Error searching products",
     };
   }
 };
@@ -183,18 +148,6 @@ const createProductService = async (productData) => {
       EM: "Product created successfully",
       data: product,
     };
-    // index into Elasticsearch if available (best-effort)
-    try {
-      await indexProduct(product);
-    } catch (err) {
-      console.warn("Elasticsearch index failed for new product:", err.message || err);
-    }
-
-    return {
-      EC: 0,
-      EM: "Product created successfully",
-      data: product,
-    };
   } catch (error) {
     console.error("Error creating product:", error);
     return {
@@ -220,18 +173,11 @@ const updateProductService = async (id, productData) => {
 
     await product.update(productData);
 
-      // update ES index (best-effort)
-      try {
-        await indexProduct(product);
-      } catch (err) {
-        console.warn("Elasticsearch index failed for updated product:", err.message || err);
-      }
-
-      return {
-        EC: 0,
-        EM: "Product updated successfully",
-        data: product,
-      };
+    return {
+      EC: 0,
+      EM: "Product updated successfully",
+      data: product,
+    };
   } catch (error) {
     console.error("Error updating product:", error);
     return {
@@ -257,13 +203,6 @@ const deleteProductService = async (id) => {
 
     await product.update({ isActive: false });
 
-    // remove from ES index (best-effort)
-    try {
-      await removeProduct(product.id);
-    } catch (err) {
-      console.warn("Elasticsearch remove failed for deleted product:", err.message || err);
-    }
-
     return {
       EC: 0,
       EM: "Product deleted successfully",
@@ -277,17 +216,6 @@ const deleteProductService = async (id) => {
   }
 };
 
-// expose bulk index utility for admin reindex endpoints
-const reindexAllProductsService = async () => {
-  try {
-    const result = await bulkIndexAllProducts();
-    return { EC: 0, EM: "Reindex finished", data: result };
-  } catch (err) {
-    console.error("Error during reindexing:", err);
-    return { EC: -1, EM: "Reindex failed" };
-  }
-};
-
 module.exports = {
   getProductsService,
   getProductByIdService,
@@ -295,6 +223,4 @@ module.exports = {
   createProductService,
   updateProductService,
   deleteProductService,
-  searchProductsService,
-  reindexAllProductsService,
 };

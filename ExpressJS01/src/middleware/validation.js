@@ -156,17 +156,12 @@ const validateProductQuery = [
   query("sortBy")
     .optional()
     .trim()
-    .isIn(["name", "price", "rating", "createdAt", "views"])
+    .isIn(["name", "price", "rating", "createdAt"])
     .withMessage("Invalid sort field"),
   query("sortOrder")
     .optional()
     .isIn(["asc", "desc"])
     .withMessage("Sort order must be asc or desc"),
-  query("minPrice").optional().isFloat({ min: 0 }).withMessage("minPrice must be a positive number").toFloat(),
-  query("maxPrice").optional().isFloat({ min: 0 }).withMessage("maxPrice must be a positive number").toFloat(),
-  query("promo").optional().isBoolean().withMessage("promo must be boolean").toBoolean(),
-  query("minViews").optional().isInt({ min: 0 }).withMessage("minViews must be non-negative integer").toInt(),
-  query("maxViews").optional().isInt({ min: 0 }).withMessage("maxViews must be non-negative integer").toInt(),
   handleValidationErrors,
 ];
 
@@ -177,5 +172,29 @@ module.exports = {
   validateResetPassword,
   validateCheckOTP,
   validateProductQuery,
+  // ===========================
+  // PRODUCT BODY VALIDATION
+  // ===========================
+  validateCreateProduct: [
+    body("name").trim().notEmpty().withMessage("Name is required"),
+    body("description").optional().trim(),
+    body("price").notEmpty().withMessage("Price is required").isFloat({ min: 0 }).withMessage("Price must be a non-negative number"),
+    body("category").trim().notEmpty().withMessage("Category is required"),
+    body("image").optional().isURL().withMessage("Image must be a valid URL"),
+    body("stock").optional().isInt({ min: 0 }).withMessage("Stock must be a non-negative integer").toInt(),
+    body("rating").optional().isFloat({ min: 0, max: 5 }).withMessage("Rating must be between 0 and 5").toFloat(),
+    body("totalReviews").optional().isInt({ min: 0 }).withMessage("totalReviews must be an integer").toInt(),
+    handleValidationErrors,
+  ],
+  validateUpdateProduct: [
+    body("name").optional().trim().notEmpty().withMessage("If provided, name can't be empty"),
+    body("description").optional().trim(),
+    body("price").optional().isFloat({ min: 0 }).withMessage("Price must be a non-negative number"),
+    body("category").optional().trim().notEmpty().withMessage("If provided, category can't be empty"),
+    body("image").optional().isURL().withMessage("Image must be a valid URL"),
+    body("stock").optional().isInt({ min: 0 }).withMessage("Stock must be a non-negative integer").toInt(),
+    body("isActive").optional().isBoolean().withMessage("isActive must be boolean").toBoolean(),
+    handleValidationErrors,
+  ],
   handleValidationErrors,
 };
