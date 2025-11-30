@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const esService = require("./esService");
 const { Op } = require("sequelize");
 
 // ===========================
@@ -61,6 +62,19 @@ const getProductsService = async (
 };
 
 // ===========================
+// SEARCH PRODUCTS (Elasticsearch)
+// ===========================
+const searchProductsService = async (queryParams) => {
+  try {
+    const result = await esService.searchProducts(queryParams);
+    return result;
+  } catch (error) {
+    console.error('Error in searchProductsService:', error);
+    return { EC: -1, EM: 'Search service error' };
+  }
+};
+
+// ===========================
 // GET PRODUCT BY ID
 // ===========================
 const getProductByIdService = async (id) => {
@@ -117,14 +131,16 @@ const getCategoriesService = async () => {
 // ===========================
 const createProductService = async (productData) => {
   try {
-    const {
-      name,
-      description,
-      price,
-      category,
-      image,
-      stock,
-    } = productData;
+      const {
+        name,
+        description,
+        price,
+        category,
+        image,
+        stock,
+        isOnPromotion,
+        views,
+      } = productData;
 
     // Validate required fields
     if (!name || !price || !category) {
@@ -141,7 +157,16 @@ const createProductService = async (productData) => {
       category,
       image,
       stock: stock || 0,
+      isOnPromotion: !!isOnPromotion,
+      views: views || 0,
     });
+
+    // index to Elasticsearch
+    try {
+      await esService.indexProduct(product);
+    } catch (e) {
+      console.warn('Indexing after create failed', e);
+    }
 
     return {
       EC: 0,
@@ -173,6 +198,13 @@ const updateProductService = async (id, productData) => {
 
     await product.update(productData);
 
+      // reindex updated product
+      try {
+        await esService.indexProduct(product);
+      } catch (e) {
+        console.warn('Indexing after update failed', e);
+      }
+
     return {
       EC: 0,
       EM: "Product updated successfully",
@@ -203,6 +235,14 @@ const deleteProductService = async (id) => {
 
     await product.update({ isActive: false });
 
+      // remove or update from ES index
+      try {
+        await esService.deleteProductFromIndex(id);
+      } catch (e) {
+        // Log and continue
+        console.warn('Removing product from index failed', e);
+      }
+
     return {
       EC: 0,
       EM: "Product deleted successfully",
@@ -223,4 +263,5 @@ module.exports = {
   createProductService,
   updateProductService,
   deleteProductService,
+  searchProductsService,
 };

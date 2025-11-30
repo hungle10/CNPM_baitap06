@@ -92,6 +92,9 @@ routerAPI.post("/reset-password", resetPassword);
 // PRODUCT ROUTES
 // ===========================
 // Public product routes (client-facing)
+const { validateSearchQuery } = require("../middleware/validation");
+
+routerAPI.get("/products/search", validateSearchQuery, productController.searchProducts);
 routerAPI.get("/products", validateProductQuery, productController.getProducts);
 routerAPI.get("/products/categories", productController.getCategories);
 routerAPI.get("/products/:id", productController.getProductById);

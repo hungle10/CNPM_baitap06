@@ -33,6 +33,14 @@ const Product = sequelize.define("Product", {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
+  isOnPromotion: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  views: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   rating: {
     type: DataTypes.DECIMAL(3, 2),
     defaultValue: 0,

@@ -165,6 +165,24 @@ const validateProductQuery = [
   handleValidationErrors,
 ];
 
+// ===========================
+// SEARCH VALIDATION
+// ===========================
+const validateSearchQuery = [
+  query('q').optional().trim(),
+  query('category').optional().trim(),
+  query('minPrice').optional().isFloat({ min: 0 }).withMessage('minPrice must be non-negative').toFloat(),
+  query('maxPrice').optional().isFloat({ min: 0 }).withMessage('maxPrice must be non-negative').toFloat(),
+  query('isOnPromotion').optional().isBoolean().withMessage('isOnPromotion must be boolean').toBoolean(),
+  query('minViews').optional().isInt({ min: 0 }).withMessage('minViews must be non-negative integer').toInt(),
+  query('minRating').optional().isFloat({ min: 0, max: 5 }).withMessage('minRating must be between 0 and 5').toFloat(),
+  query('page').optional().isInt({ min: 1 }).toInt(),
+  query('limit').optional().isInt({ min: 1, max: 100 }).toInt(),
+  query('sortBy').optional().isIn(['price','rating','totalReviews','views','createdAt']).withMessage('Invalid sort field'),
+  query('sortOrder').optional().isIn(['asc','desc']).withMessage('Sort order must be asc or desc'),
+  handleValidationErrors,
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -196,5 +214,6 @@ module.exports = {
     body("isActive").optional().isBoolean().withMessage("isActive must be boolean").toBoolean(),
     handleValidationErrors,
   ],
+    validateSearchQuery,
   handleValidationErrors,
 };

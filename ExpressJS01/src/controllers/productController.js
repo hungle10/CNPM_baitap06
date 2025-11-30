@@ -34,6 +34,48 @@ const getProducts = async (req, res) => {
 };
 
 // ===========================
+// SEARCH PRODUCTS (Elasticsearch) - top level
+// ===========================
+const searchProducts = async (req, res) => {
+  try {
+    const {
+      q,
+      category,
+      minPrice,
+      maxPrice,
+      isOnPromotion,
+      minViews,
+      minRating,
+      sortBy,
+      sortOrder,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    const { searchProductsService } = require('../services/productService');
+
+    const result = await searchProductsService({
+      q,
+      category,
+      minPrice,
+      maxPrice,
+      isOnPromotion,
+      minViews,
+      minRating,
+      sortBy,
+      sortOrder,
+      page: parseInt(page),
+      limit: parseInt(limit),
+    });
+
+    return res.status(result.EC === 0 ? 200 : 500).json(result);
+  } catch (error) {
+    console.error('Error in searchProducts:', error);
+    return res.status(500).json({ EC: -1, EM: 'Internal server error' });
+  }
+};
+
+// ===========================
 // GET PRODUCT BY ID
 // ===========================
 const getProductById = async (req, res) => {
@@ -74,7 +116,7 @@ const getCategories = async (req, res) => {
 // ===========================
 const createProduct = async (req, res) => {
   try {
-    const { name, description, price, category, image, stock } = req.body;
+    const { name, description, price, category, image, stock, isOnPromotion, views } = req.body;
 
     const result = await createProductService({
       name,
@@ -83,6 +125,8 @@ const createProduct = async (req, res) => {
       category,
       image,
       stock,
+      isOnPromotion,
+      views,
     });
 
     const statusCode = result.EC === 0 ? 201 : 400;
@@ -102,7 +146,7 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category, image, stock, isActive } = req.body;
+    const { name, description, price, category, image, stock, isActive, isOnPromotion, views } = req.body;
 
     const result = await updateProductService(id, {
       name,
@@ -111,6 +155,8 @@ const updateProduct = async (req, res) => {
       category,
       image,
       stock,
+      isOnPromotion,
+      views,
       isActive,
     });
 
@@ -152,4 +198,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  searchProducts,
 };

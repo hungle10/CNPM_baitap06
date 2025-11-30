@@ -13,6 +13,8 @@ const sampleProducts = [
     stock: 15,
     rating: 4.8,
     totalReviews: 245,
+    isOnPromotion: false,
+    views: 1200,
   },
   {
     name: "Dell XPS 13 Plus",
@@ -23,6 +25,8 @@ const sampleProducts = [
     stock: 20,
     rating: 4.6,
     totalReviews: 189,
+    isOnPromotion: true,
+    views: 950,
   },
   {
     name: "Logitech MX Master 3S",
@@ -33,6 +37,8 @@ const sampleProducts = [
     stock: 50,
     rating: 4.9,
     totalReviews: 567,
+    isOnPromotion: false,
+    views: 3450,
   },
   {
     name: "Razer DeathAdder V3",
@@ -43,6 +49,8 @@ const sampleProducts = [
     stock: 35,
     rating: 4.7,
     totalReviews: 432,
+    isOnPromotion: true,
+    views: 2100,
   },
   {
     name: "Keychron K2 Mechanical Keyboard",
@@ -53,6 +61,8 @@ const sampleProducts = [
     stock: 25,
     rating: 4.8,
     totalReviews: 389,
+    isOnPromotion: true,
+    views: 870,
   },
   {
     name: "Cherry MX Switch Mechanical Keyboard",
@@ -63,6 +73,8 @@ const sampleProducts = [
     stock: 18,
     rating: 4.7,
     totalReviews: 276,
+    isOnPromotion: false,
+    views: 760,
   },
   {
     name: "Dell UltraSharp U2723DE",
@@ -73,6 +85,8 @@ const sampleProducts = [
     stock: 12,
     rating: 4.8,
     totalReviews: 234,
+    isOnPromotion: false,
+    views: 420,
   },
   {
     name: "LG 38UD99 UltraWide",
@@ -83,6 +97,8 @@ const sampleProducts = [
     stock: 8,
     rating: 4.6,
     totalReviews: 156,
+    isOnPromotion: true,
+    views: 300,
   },
   {
     name: "Sony WH-1000XM5",
@@ -93,6 +109,8 @@ const sampleProducts = [
     stock: 30,
     rating: 4.9,
     totalReviews: 512,
+    isOnPromotion: false,
+    views: 1980,
   },
   {
     name: "Apple AirPods Pro",
@@ -103,6 +121,8 @@ const sampleProducts = [
     stock: 45,
     rating: 4.7,
     totalReviews: 623,
+    isOnPromotion: false,
+    views: 3500,
   },
   {
     name: "Sennheiser Momentum 3",
@@ -113,6 +133,8 @@ const sampleProducts = [
     stock: 22,
     rating: 4.8,
     totalReviews: 298,
+    isOnPromotion: true,
+    views: 420,
   },
   {
     name: "Samsung T7 2TB SSD",
@@ -123,6 +145,8 @@ const sampleProducts = [
     stock: 40,
     rating: 4.8,
     totalReviews: 445,
+    isOnPromotion: false,
+    views: 690,
   },
   {
     name: "Seagate Barracuda 4TB",
@@ -133,6 +157,8 @@ const sampleProducts = [
     stock: 55,
     rating: 4.6,
     totalReviews: 378,
+    isOnPromotion: true,
+    views: 845,
   },
   {
     name: "Western Digital WD Blue 1TB",
@@ -143,6 +169,8 @@ const sampleProducts = [
     stock: 60,
     rating: 4.7,
     totalReviews: 521,
+    isOnPromotion: false,
+    views: 1000,
   },
   {
     name: "Corsair Vengeance RGB Pro 32GB",
@@ -153,6 +181,8 @@ const sampleProducts = [
     stock: 35,
     rating: 4.8,
     totalReviews: 267,
+    isOnPromotion: false,
+    views: 210,
   },
   {
     name: "Intel Core i7-13700K",
@@ -163,6 +193,8 @@ const sampleProducts = [
     stock: 20,
     rating: 4.9,
     totalReviews: 389,
+    isOnPromotion: true,
+    views: 2300,
   },
 ];
 
